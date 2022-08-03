@@ -2,6 +2,7 @@ package com.liga.carwash.enums;
 
 public enum RoleType {
     ROLE_ADMIN,
-    ROLE_MODERATOR,
-    ROLE_USER
+    ROLE_OPERATOR,
+    ROLE_USER,
+    ROLE_ANONYMOUS
 }
