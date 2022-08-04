@@ -1,6 +1,6 @@
 package com.liga.carwash.specification;
 
-import com.liga.carwash.enums.SlotStatus;
+import com.liga.carwash.enums.ReservationStatus;
 import com.liga.carwash.model.Box;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,7 +23,7 @@ public class SearchCriteria {
 
     private LocalDate date;
 
-    private SlotStatus status = SlotStatus.AVAILABLE;
+    private ReservationStatus status = ReservationStatus.AVAILABLE;
     private LocalTime timeStart;
     private LocalTime timeEnd;
 

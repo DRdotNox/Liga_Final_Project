@@ -27,6 +27,9 @@ public class Option {
     @Column(name = "time")
     private int time;
 
+    @Column(name = "discount")
+    private int discount;
+
     @ManyToMany
     List<Slot> slots;
 }

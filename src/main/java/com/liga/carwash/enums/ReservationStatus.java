@@ -1,8 +1,8 @@
 package com.liga.carwash.enums;
 
-public enum SlotStatus {
+public enum ReservationStatus {
     AVAILABLE,
     BOOKED,
-    CANCEL,
+    CANCELLED,
     FINISHED
 }

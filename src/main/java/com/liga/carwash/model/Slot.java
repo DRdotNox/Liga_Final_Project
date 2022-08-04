@@ -1,6 +1,6 @@
 package com.liga.carwash.model;
 
-import com.liga.carwash.enums.SlotStatus;
+import com.liga.carwash.enums.ReservationStatus;
 import com.sun.istack.NotNull;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,19 +26,20 @@ public class Slot {
     @Column(name = "timeEnd")
     private LocalTime timeEnd;
 
-    //double cost;
-    @NotNull
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status")
-    private SlotStatus status = SlotStatus.AVAILABLE;
+    @ManyToOne(targetEntity = Reservation.class,cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @JoinColumn(name="reservation_id",referencedColumnName = "id")
+    Reservation reservation;
 
-    @ManyToMany
-    private List<Option> options;
+    @ManyToOne(targetEntity = Box.class,cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @JoinColumn(name="box_id",referencedColumnName = "id")
+    Box box;
+
+    //double cost;
 
     @Override
     public String toString() {
         return date.toString() + "  "
                 + timeStart.toString() + " - " + timeEnd.toString() + "  "
-                + status.toString();
+                + reservation.getId();
     }
 }

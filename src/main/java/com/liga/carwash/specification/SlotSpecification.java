@@ -35,7 +35,9 @@ public class SlotSpecification implements Specification<Slot> {
 
        // predicates.add(builder.equal(root.get("box"), searchCriteria.getBox()));
 
-        predicates.add(builder.equal(root.get("status"), searchCriteria.getStatus()));
+        //predicates.add(builder.equal(root.get("status"), searchCriteria.getStatus()));
+
+        predicates.add(builder.isNull((root.get("reservation"))));
 
         predicates.add(builder.equal(root.get("date"), searchCriteria.getDate()));
 

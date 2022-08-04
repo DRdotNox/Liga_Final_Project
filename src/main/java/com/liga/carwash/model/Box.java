@@ -1,6 +1,7 @@
 package com.liga.carwash.model;
 
 import javax.persistence.*;
+import java.time.LocalTime;
 import java.util.List;
 
 @Entity
@@ -11,6 +12,15 @@ public class Box {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @OneToMany
+    @Column(name = "coef")
+    double coef;
+
+    @Column(name = "openTime")
+    LocalTime openTime;
+
+    @Column(name = "closeTime")
+    LocalTime closeTime;
+
+    @OneToMany(mappedBy = "box", targetEntity = Slot.class)
     List<Slot> slotList;
 }

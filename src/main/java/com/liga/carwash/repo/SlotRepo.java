@@ -8,6 +8,6 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Repository
-public interface SlotsRepo extends JpaRepository<Slot,Long>, JpaSpecificationExecutor<Slot> {
+public interface SlotRepo extends JpaRepository<Slot,Long>, JpaSpecificationExecutor<Slot> {
     List<Slot> findSlotsByDate(LocalDate date);
 }
