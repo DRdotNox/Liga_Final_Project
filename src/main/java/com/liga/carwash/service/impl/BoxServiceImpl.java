@@ -5,6 +5,7 @@ import com.liga.carwash.model.DTO.BoxDTO;
 import com.liga.carwash.repo.BoxRepo;
 import com.liga.carwash.service.BoxService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
@@ -14,6 +15,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BoxServiceImpl implements BoxService {
     private final BoxRepo boxRepo;
+
+    @Override
+    public List<Box> getAllBoxSorted() {
+       return boxRepo.findAll(Sort.by(Sort.Direction.ASC, "coef"));
+    }
+
     @Override
     public void addBox(BoxDTO boxDTO) {
         //маппер

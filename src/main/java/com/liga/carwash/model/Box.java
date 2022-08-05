@@ -1,26 +1,39 @@
 package com.liga.carwash.model;
 
+import lombok.*;
+
 import javax.persistence.*;
 import java.time.LocalTime;
 import java.util.List;
 
 @Entity
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "boxes")
 public class Box {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    private Long id;
 
     @Column(name = "coef")
-    double coef;
+    private double coef;
 
     @Column(name = "openTime")
-    LocalTime openTime;
+    private LocalTime openTime;
 
     @Column(name = "closeTime")
-    LocalTime closeTime;
+    private LocalTime closeTime;
 
     @OneToMany(mappedBy = "box", targetEntity = Slot.class)
-    List<Slot> slotList;
+    private List<Slot> slotList;
+
+    @OneToMany(mappedBy = "box", targetEntity = Reservation.class)
+    private List<Reservation> reservations;
+
+//    @OneToOne
+//    private User user;
 }

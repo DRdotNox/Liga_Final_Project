@@ -8,7 +8,7 @@ import java.time.LocalTime;
 import java.util.List;
 
 @Getter
-public class SlotDTO {
+public class ReservationAutoDTO {
 
     LocalDate date;
     LocalTime start;

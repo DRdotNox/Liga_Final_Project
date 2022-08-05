@@ -24,24 +24,29 @@ public class Reservation {
     @NotNull
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
-    private ReservationStatus status = ReservationStatus.AVAILABLE;
+    private ReservationStatus status;
 
     @Column(name = "timeStart")
-    LocalTime timeStart;
+    private LocalTime timeStart;
 
     @Column(name = "timeEnd")
-    LocalTime timeEnd;
+    private LocalTime timeEnd;
 
     @OneToMany(targetEntity = Slot.class, mappedBy="reservation", fetch = FetchType.LAZY,cascade = CascadeType.ALL)
-    List<Slot> slotList;
+    private List<Slot> slotList;
 
-//    @Column(name = "full_cost")
-//    int full_cost;
+    @Column(name = "full_cost")
+    private int full_cost;
 
     @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     @JoinColumn(name="user_id",referencedColumnName = "id")
-    User user;
+    private User user;
 
-    @ManyToMany
+    @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @JoinColumn(name="box_id",referencedColumnName = "id")
+    private Box box;
+
+    @OneToMany(targetEntity = Option.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "options")
     private List<Option> options;
 }

@@ -10,6 +10,7 @@ public interface BoxService {
     void updateBox(BoxDTO boxDTO);
     Box getBoxById(Long id);
     List<Box> getAllBox();
+    List<Box> getAllBoxSorted();
     void deleteBoxById(Long id);
     void deleteAllBoxes();
 }

@@ -29,7 +29,4 @@ public class Option {
 
     @Column(name = "discount")
     private int discount;
-
-    @ManyToMany
-    List<Slot> slots;
 }

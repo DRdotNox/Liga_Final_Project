@@ -33,7 +33,7 @@ public class SlotSpecification implements Specification<Slot> {
                                  CriteriaBuilder builder) {
         List<Predicate> predicates = new ArrayList<>();
 
-       // predicates.add(builder.equal(root.get("box"), searchCriteria.getBox()));
+        predicates.add(builder.equal(root.get("box"), searchCriteria.getBox()));
 
         //predicates.add(builder.equal(root.get("status"), searchCriteria.getStatus()));
 
@@ -48,7 +48,6 @@ public class SlotSpecification implements Specification<Slot> {
 //            predicates.add(builder.lessThanOrEqualTo(root.get("timeStart"), searchCriteria.getTimeEnd()));
 //        }
         query.orderBy(builder.asc(root.get("timeStart")));
-        predicates.forEach(predicate -> System.out.println(predicate.toString()));
         return builder.and(predicates.toArray(new Predicate[0]));
     }
 
