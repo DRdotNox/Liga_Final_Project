@@ -1,24 +1,24 @@
 package com.liga.carwash.model.DTO;
 
 import com.liga.carwash.enums.ReservationStatus;
-import com.liga.carwash.model.Box;
 import com.liga.carwash.model.Slot;
-import com.liga.carwash.model.User;
-import com.sun.istack.NotNull;
-import lombok.Getter;
+import lombok.*;
 
-import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 @Getter
-public class ReservationDTO {
-    private Long id;
+@Setter
+public class ReservationShortDTO {
     private Long box_id;
     private ReservationStatus status;
     private LocalDate date;
     private LocalTime timeStart;
     private LocalTime timeEnd;
-    private List<Slot> slotList;
+    private List<String> options;
     private int full_cost;
 }

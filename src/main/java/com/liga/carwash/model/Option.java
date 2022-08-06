@@ -28,5 +28,5 @@ public class Option {
     private int time;
 
     @Column(name = "discount")
-    private int discount;
+    private Integer discount;
 }

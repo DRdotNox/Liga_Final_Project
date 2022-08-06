@@ -1,10 +1,12 @@
 package com.liga.carwash.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.liga.carwash.enums.ReservationStatus;
 import com.sun.istack.NotNull;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -29,6 +31,9 @@ public class Reservation {
     @Column(name = "timeStart")
     private LocalTime timeStart;
 
+    @Column(name = "date")
+    private LocalDate date;
+
     @Column(name = "timeEnd")
     private LocalTime timeEnd;
 
@@ -38,15 +43,18 @@ public class Reservation {
     @Column(name = "full_cost")
     private int full_cost;
 
-    @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @Column(name = "inTime")
+    private Boolean inTime;
+
+    @ManyToOne(targetEntity = User.class,cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     @JoinColumn(name="user_id",referencedColumnName = "id")
     private User user;
 
-    @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @ManyToOne(targetEntity = Box.class, cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     @JoinColumn(name="box_id",referencedColumnName = "id")
     private Box box;
 
-    @OneToMany(targetEntity = Option.class, fetch = FetchType.LAZY)
+    @OneToMany(targetEntity = Option.class, fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinColumn(name = "options")
     private List<Option> options;
 }

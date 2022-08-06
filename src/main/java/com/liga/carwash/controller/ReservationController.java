@@ -4,6 +4,7 @@ import com.liga.carwash.enums.ReservationStatus;
 import com.liga.carwash.model.Box;
 import com.liga.carwash.model.DTO.ReservationDTO;
 import com.liga.carwash.model.DTO.ReservationAutoDTO;
+import com.liga.carwash.model.DTO.ReservationShortDTO;
 import com.liga.carwash.model.Option;
 import com.liga.carwash.model.Reservation;
 import com.liga.carwash.model.Slot;
@@ -15,6 +16,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.websocket.server.PathParam;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 @RestController
@@ -42,8 +46,13 @@ public class ReservationController {
 
     @GetMapping("/all")
     @ResponseStatus(HttpStatus.OK)
-    public List<Reservation> getAllReservations(){
-        return reservationService.getAllReservations();
+    public List<ReservationShortDTO> getAllReservations(@PathParam("box_id") Long box_id,
+                                                        @PathParam(value = "date") LocalDate date,
+                                                        @PathParam(value = "timeStart") LocalTime timeStart,
+                                                        @PathParam(value = "timeEnd") LocalTime timeEnd){
+        Box box = null;
+        if(box_id != null ) box = boxService.getBoxById(box_id);
+        return reservationService.getAllReservations(box, date, timeStart, timeEnd);
     }
 
     @GetMapping("/all/{id}")
@@ -74,6 +83,18 @@ public class ReservationController {
 //    public void deleteAllByBox(@PathParam("box_id") Long box_id){
 //        reservationService.deleteAllReservationsByBox(box_id);
 //    }
+
+    @GetMapping("/all/income")
+    @ResponseStatus(HttpStatus.OK)
+    public Double getIncome(@PathParam("box_id") Long box_id,
+                            @PathParam(value = "dateFrom") LocalDate dateFrom,
+                            @PathParam(value = "dateTo") LocalDate dateTo,
+                            @PathParam(value = "timeStart") LocalTime timeStart,
+                            @PathParam(value = "timeEnd") LocalTime timeEnd){
+        Box box = null;
+        if(box_id != null ) box = boxService.getBoxById(box_id);
+        return reservationService.getIncome(box,dateFrom, dateTo, timeStart, timeEnd);
+    }
 
     @DeleteMapping("/all")
     @ResponseStatus(HttpStatus.OK)

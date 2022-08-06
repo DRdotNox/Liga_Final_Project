@@ -5,22 +5,24 @@ import com.liga.carwash.mapper.Mapper;
 import com.liga.carwash.model.Box;
 import com.liga.carwash.model.DTO.ReservationAutoDTO;
 import com.liga.carwash.model.DTO.ReservationDTO;
-import com.liga.carwash.model.Option;
+import com.liga.carwash.model.DTO.ReservationShortDTO;
 import com.liga.carwash.model.Reservation;
 import com.liga.carwash.model.Slot;
-import com.liga.carwash.repo.BoxRepo;
 import com.liga.carwash.repo.ReservationRepo;
-import com.liga.carwash.repo.SlotRepo;
 import com.liga.carwash.service.ReservationService;
+import com.liga.carwash.specification.IncomeCriteria;
+import com.liga.carwash.specification.IncomeSpecification;
+import com.liga.carwash.specification.ReservationSpecification;
 import com.liga.carwash.specification.SearchCriteria;
-import com.liga.carwash.specification.SlotSpecification;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Sort;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityManager;
 import javax.persistence.EntityNotFoundException;
-import java.util.ArrayList;
+import javax.transaction.Transactional;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Service
@@ -29,6 +31,8 @@ public class ReservationServiceImpl implements ReservationService {
     final private ReservationRepo reservationRepo;
     private Mapper mapper = new Mapper();
 
+    private final int CANCELLING_TIME = 30;
+
     @Override
     public void addReservation(ReservationDTO reservationDTO) {
         //маппер
@@ -36,61 +40,93 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
-    public List<Reservation> getAllReservations() {
-        return reservationRepo.findAll();
+    @Transactional
+    public List<ReservationShortDTO> getAllReservations(Box box, LocalDate date, LocalTime timeStart, LocalTime timeEnd) {
+
+        List<ReservationShortDTO> dtoList;
+
+        if(box == null && date == null && timeStart == null && timeEnd == null ) {
+            dtoList = reservationRepo.findAll().stream()
+                    .map(reservation -> mapper.ReservationToShortDTO(reservation))
+                    .toList();
+            return dtoList;
+        }
+
+        SearchCriteria searchCriteria = SearchCriteria.builder()
+                .box(box)
+                .date(date)
+                .timeStart(timeStart)
+                .timeEnd(timeEnd)
+                .build();
+
+        ReservationSpecification spec = new ReservationSpecification(searchCriteria);
+        dtoList = reservationRepo.findAll(spec).stream()
+                .map(reservation -> mapper.ReservationToShortDTO(reservation))
+                .toList();
+        return dtoList;
+
+    }
+
+
+    @Override
+    @Transactional
+    public void cancelReservation(Long id) {
+        Reservation reservation = getReservationById(id);
+        cancelReservationByReservation(reservation);
     }
 
     @Override
-    public void cancelReservation(Long id) {
-        Reservation reservation = getReservationById(id);
+    @Transactional
+    public void cancelReservationByReservation(Reservation reservation) {
         reservation.setStatus(ReservationStatus.CANCELLED);
         reservation.getSlotList()
-                .stream()
                 .forEach(slot -> slot.setReservation(null));
         reservation.getSlotList().clear();
         reservationRepo.save(reservation);
     }
 
     @Override
+    @Transactional
     public void updateReservation(ReservationDTO reservationDTO) {
         //маппер
         //reservationRepo.save();
     }
 
     @Override
+    @Transactional
     public void deleteAllReservationsByBox(Long box_id) {
         //Добавить спецификацию с поиском по боксу
     }
 
     @Override
+    @Transactional
     public Reservation getReservationById(Long id) {
 
         return reservationRepo.findById(id).orElseThrow(EntityNotFoundException::new);
     }
 
     @Override
-    public String bookTimeAuto(List<Slot> slots, ReservationAutoDTO reservationAutoDTO) {
-        int full_cost = reservationAutoDTO.getOptions().stream().mapToInt(Option::getPrice).sum();
-        Reservation reservation = Reservation.builder()
-                .timeStart(slots.get(0).getTimeStart())
-                .timeEnd(slots.get(slots.size()-1).getTimeEnd())
-                .status(ReservationStatus.BOOKED)
-                .full_cost(full_cost)
-                .box(slots.get(0).getBox())
-                .build();
+    @Transactional
+    public void deleteOneReservation() {
 
+    }
+
+    @Override
+    @Transactional
+    public void deleteAllReservations() {
+        reservationRepo.deleteAll();
+    }
+
+    @Override
+    @Transactional
+    public String bookTimeAuto(List<Slot> slots, ReservationAutoDTO reservationAutoDTO) {
+        Reservation reservation = mapper.DtoToReservation(reservationAutoDTO,slots);
         slots.forEach(slot -> slot.setReservation(reservation));
-        slots.forEach(System.out::println);
         reservationRepo.save(reservation);
         return null;
     }
 
-    @Override
-    public void addFreeSlotsForMonth() {
-
-    }
-
-// перед удалением обнуляются id брони у слотов
+    // перед удалением обнуляются id брони у слотов
     @Override
     public void deleteOneReservationById(Long id) {
         Reservation reservation = getReservationById(id);
@@ -102,12 +138,52 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
-    public void deleteOneReservation() {
+    @Transactional
+    @Scheduled(cron = "${cron.reservation}")
+    public void checkReservationForCancelling() {
 
+        LocalTime time = LocalTime.now();
+
+        SearchCriteria searchCriteria = SearchCriteria.builder()
+                .date(LocalDate.now())
+                .inTime(false)
+                .timeStart(time)
+                .build();
+
+        ReservationSpecification spec = new ReservationSpecification(searchCriteria);
+        List<Reservation> list = reservationRepo.findAll(spec);
+
+        if(list.size() == 0) return;
+
+        for (Reservation reservation : list) {
+            if(ChronoUnit.MINUTES.between(time, reservation.getTimeStart()) <= CANCELLING_TIME){
+                cancelReservationByReservation(reservation);
+            }
+        }
     }
 
     @Override
-    public void deleteAllReservations() {
+    public Double getIncome(Box box, LocalDate dateFrom, LocalDate dateTo, LocalTime timeStart, LocalTime timeEnd) {
 
+        System.out.println("box.getId() = " + box.getId());
+
+        IncomeCriteria incomeCriteria = IncomeCriteria.builder()
+                .box(box)
+                .dateFrom(dateFrom)
+                .dateTo(dateTo)
+                .timeStart(timeStart)
+                .timeEnd(timeEnd)
+                .build();
+
+        IncomeSpecification spec = new IncomeSpecification(incomeCriteria);
+
+        List<Reservation> list = reservationRepo.findAll(spec);
+
+        list.forEach(reservation -> System.out.println(reservation.getId()));
+
+        Double income = list.stream().mapToDouble(Reservation::getFull_cost).sum();
+
+        System.out.println(income);
+        return income;
     }
 }

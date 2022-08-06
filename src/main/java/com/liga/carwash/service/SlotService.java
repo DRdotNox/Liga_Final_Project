@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface SlotService {
     List<Slot> getFreeSlotsForReservation(List<Box> boxes, ReservationAutoDTO reservationAutoDTO);
+    void addSlotsForPeriod();
 }

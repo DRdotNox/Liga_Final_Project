@@ -10,4 +10,6 @@ import java.util.List;
 @Repository
 public interface SlotRepo extends JpaRepository<Slot,Long>, JpaSpecificationExecutor<Slot> {
     List<Slot> findSlotsByDate(LocalDate date);
+    Slot findByDate(LocalDate date);
+    Slot findFirstByDate(LocalDate date);
 }

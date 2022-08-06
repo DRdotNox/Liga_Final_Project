@@ -1,9 +1,9 @@
 package com.liga.carwash.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.liga.carwash.enums.ReservationStatus;
 import com.sun.istack.NotNull;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -11,6 +11,9 @@ import java.time.LocalTime;
 import java.util.List;
 
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 @Getter
 @Setter
 @Table(name = "slots")

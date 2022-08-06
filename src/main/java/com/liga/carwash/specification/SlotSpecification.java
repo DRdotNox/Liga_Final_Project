@@ -23,8 +23,6 @@ import org.springframework.lang.Nullable;
 @Getter
 @Setter
 public class SlotSpecification implements Specification<Slot> {
-
-    private final String STATUS_FIELD = "status";
     private SearchCriteria searchCriteria;
 
     @Nullable
