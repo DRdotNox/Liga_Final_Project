@@ -1,4 +1,4 @@
-package com.liga.carwash.schedule;
+package com.liga.carwash.config;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;

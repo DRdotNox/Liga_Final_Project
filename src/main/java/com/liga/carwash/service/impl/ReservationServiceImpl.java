@@ -164,9 +164,6 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     public Double getIncome(Box box, LocalDate dateFrom, LocalDate dateTo, LocalTime timeStart, LocalTime timeEnd) {
-
-        System.out.println("box.getId() = " + box.getId());
-
         IncomeCriteria incomeCriteria = IncomeCriteria.builder()
                 .box(box)
                 .dateFrom(dateFrom)
