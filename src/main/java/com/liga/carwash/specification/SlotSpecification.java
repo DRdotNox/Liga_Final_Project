@@ -42,9 +42,10 @@ public class SlotSpecification implements Specification<Slot> {
         if (searchCriteria.getTimeStart() != null) {
             predicates.add(builder.greaterThanOrEqualTo(root.get("timeStart"), searchCriteria.getTimeStart()));
         }
-//        if (searchCriteria.getTimeEnd() != null) {
-//            predicates.add(builder.lessThanOrEqualTo(root.get("timeStart"), searchCriteria.getTimeEnd()));
-//        }
+        if (searchCriteria.getTimeEnd() != null) {
+            predicates.add(builder.lessThanOrEqualTo(root.get("timeEnd"), searchCriteria.getTimeEnd()));
+        }
+
         query.orderBy(builder.asc(root.get("timeStart")));
         return builder.and(predicates.toArray(new Predicate[0]));
     }

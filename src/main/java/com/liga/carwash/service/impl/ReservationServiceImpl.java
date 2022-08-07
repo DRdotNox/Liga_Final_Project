@@ -2,12 +2,10 @@ package com.liga.carwash.service.impl;
 
 import com.liga.carwash.enums.ReservationStatus;
 import com.liga.carwash.mapper.Mapper;
-import com.liga.carwash.model.Box;
+import com.liga.carwash.model.*;
 import com.liga.carwash.model.DTO.ReservationAutoDTO;
 import com.liga.carwash.model.DTO.ReservationDTO;
 import com.liga.carwash.model.DTO.ReservationShortDTO;
-import com.liga.carwash.model.Reservation;
-import com.liga.carwash.model.Slot;
 import com.liga.carwash.repo.ReservationRepo;
 import com.liga.carwash.service.ReservationService;
 import com.liga.carwash.specification.IncomeCriteria;
@@ -15,6 +13,7 @@ import com.liga.carwash.specification.IncomeSpecification;
 import com.liga.carwash.specification.ReservationSpecification;
 import com.liga.carwash.specification.SearchCriteria;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -26,12 +25,13 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class ReservationServiceImpl implements ReservationService {
     final private ReservationRepo reservationRepo;
     private Mapper mapper = new Mapper();
 
-    private final int CANCELLING_TIME = 30;
+    private final int CANCELLING_TIME = 15;
 
     @Override
     public void addReservation(ReservationDTO reservationDTO) {
@@ -101,8 +101,13 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     @Transactional
     public Reservation getReservationById(Long id) {
+        Reservation reservation = reservationRepo.findById(id).orElseThrow(EntityNotFoundException::new);
+        return reservation;
+    }
 
-        return reservationRepo.findById(id).orElseThrow(EntityNotFoundException::new);
+    @Override
+    public ReservationShortDTO getReservationShortDTOById(Long id) {
+        return mapper.ReservationToShortDTO(getReservationById(id));
     }
 
     @Override
@@ -122,6 +127,8 @@ public class ReservationServiceImpl implements ReservationService {
     public String bookTimeAuto(List<Slot> slots, ReservationAutoDTO reservationAutoDTO) {
         Reservation reservation = mapper.DtoToReservation(reservationAutoDTO,slots);
         slots.forEach(slot -> slot.setReservation(reservation));
+        reservation.getOptions().stream().map(Option::getName).forEach(System.out::println);
+        reservation.getOptions().stream().map(Option::getTime).forEach(System.out::println);
         reservationRepo.save(reservation);
         return null;
     }
@@ -158,6 +165,8 @@ public class ReservationServiceImpl implements ReservationService {
         for (Reservation reservation : list) {
             if(ChronoUnit.MINUTES.between(time, reservation.getTimeStart()) <= CANCELLING_TIME){
                 cancelReservationByReservation(reservation);
+                log.info("Бронь в бокс "+ reservation.getBox().getId() +"на" + reservation.getDate()
+                        + " c "+reservation.getTimeStart() +" до "+reservation.getTimeEnd() +" "+"отменена");
             }
         }
     }
@@ -176,11 +185,35 @@ public class ReservationServiceImpl implements ReservationService {
 
         List<Reservation> list = reservationRepo.findAll(spec);
 
-        list.forEach(reservation -> System.out.println(reservation.getId()));
-
         Double income = list.stream().mapToDouble(Reservation::getFull_cost).sum();
 
-        System.out.println(income);
         return income;
+    }
+
+    @Override
+    public void setInTimeTrue(Long id) {
+        Reservation reservation = getReservationById(id);
+        reservation.setInTime(true);
+        reservationRepo.save(reservation);
+    }
+
+    @Override
+    public List<ReservationShortDTO> getReservationsByUser(User user) {
+        return reservationRepo.findAllByUser(user).stream()
+                .map(reservation -> mapper.ReservationToShortDTO(reservation))
+                .toList();
+    }
+
+    @Override
+    public void moveReservation(Long id, List<Slot> slots, ReservationAutoDTO reservationAutoDTO) {
+       log.info("moveReservationService");
+        Reservation reservation = mapper.DtoToReservation(reservationAutoDTO,slots);
+        reservation.setId(id);
+        reservation.getSlotList()
+                .stream()
+                .forEach(slot -> slot.setReservation(null));
+        reservation.getSlotList().clear();
+        reservationRepo.save(reservation);
+
     }
 }

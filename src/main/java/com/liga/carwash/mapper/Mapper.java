@@ -20,7 +20,6 @@ public class Mapper {
                 .build();
     }
     public Reservation DtoToReservation(ReservationAutoDTO reservationAutoDTO, List<Slot> slots){
-        reservationAutoDTO.getOptions().stream().map(Option::getName).forEach(System.out::println);
         return Reservation.builder()
                 .timeStart(slots.get(0).getTimeStart())
                 .timeEnd(slots.get(slots.size()-1).getTimeEnd())
@@ -28,6 +27,7 @@ public class Mapper {
                 .status(ReservationStatus.BOOKED)
                 .full_cost(reservationAutoDTO.getOptions().stream().mapToInt(Option::getPrice).sum())
                 .options(reservationAutoDTO.getOptions())
+                .slotList(slots)
                 .box(slots.get(0).getBox())
                 .inTime(false)
                 .build();
@@ -42,6 +42,15 @@ public class Mapper {
                 .timeEnd(reservation.getTimeEnd())
                 .options(reservation.getOptions().stream().map(Option::getName).collect(Collectors.toList()))
                 .full_cost(reservation.getFull_cost())
+                .build();
+    }
+
+    public ReservationAutoDTO ReservationToAutoDTO(Reservation reservation){
+        return ReservationAutoDTO.builder()
+                .date(reservation.getDate())
+                .start(reservation.getTimeStart())
+                .end(reservation.getTimeEnd())
+                .options(reservation.getOptions())
                 .build();
     }
 }

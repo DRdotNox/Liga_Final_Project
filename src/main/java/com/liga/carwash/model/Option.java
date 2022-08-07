@@ -29,4 +29,8 @@ public class Option {
 
     @Column(name = "discount")
     private Integer discount;
+
+//    @ManyToMany(mappedBy = "options")
+//    private List<Reservation> reservations;
+
 }

@@ -1,16 +1,19 @@
 package com.liga.carwash.service.impl;
 
+import com.liga.carwash.mapper.Mapper;
 import com.liga.carwash.model.Box;
 import com.liga.carwash.model.DTO.ReservationAutoDTO;
+import com.liga.carwash.model.DTO.ReservationMoveDTO;
 import com.liga.carwash.model.Option;
+import com.liga.carwash.model.Reservation;
 import com.liga.carwash.model.Slot;
-import com.liga.carwash.repo.BoxRepo;
 import com.liga.carwash.repo.SlotRepo;
 import com.liga.carwash.service.BoxService;
 import com.liga.carwash.service.SlotService;
 import com.liga.carwash.specification.SearchCriteria;
 import com.liga.carwash.specification.SlotSpecification;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class SlotServiceImpl implements SlotService {
     private final SlotRepo slotRepo;
@@ -31,9 +35,8 @@ public class SlotServiceImpl implements SlotService {
     @Transactional
     @Scheduled(cron ="${cron.slot}")
     public void addSlotsForPeriod() {
-        System.out.println("in scheduled");
         if(slotRepo.findFirstByDate(LocalDate.now()) != null) {
-            System.out.println("слоты на сегодня уже добавлены");
+            log.info("Слоты на сегодня уже есть");
             return;
         }
 
@@ -72,24 +75,35 @@ public class SlotServiceImpl implements SlotService {
                // if(timeEnd.isAfter(box.getCloseTime())) return;
             }
         }
-
+        log.info("Слоты на сегодня успешно добавлены");
     }
 
     @Override
     public List<Slot> getFreeSlotsForReservation(List<Box> boxes, ReservationAutoDTO reservationAutoDTO) {
         double overallTime = reservationAutoDTO.getOptions().stream().mapToInt(Option::getTime).sum();
+        if(reservationAutoDTO.getStart()!=null && reservationAutoDTO.getEnd()!=null){
+            if(overallTime > ChronoUnit.MINUTES.between(reservationAutoDTO.getStart(),reservationAutoDTO.getEnd())){
+                log.info("Общее время выполнения услуг превышает заданный для брони диапазон времени");
+                return null;
+            }
+        }
+
         List<Slot> slots = new ArrayList<>();
         for (Box box : boxes) {
             slots = findSlotsInBox(box, reservationAutoDTO, overallTime);
             if(slots != null) break;
         }
 
-        if (slots == null) System.out.println("Ничего не найдено");
+        if (slots == null) log.info("Ничего не найдено");
+
         return slots;
     }
 
+
     List<Slot> findSlotsInBox(Box box, ReservationAutoDTO reservationAutoDTO, double overallTime){
         int numberOfSlots = (int)Math.ceil(overallTime*box.getCoef()/30);
+        System.out.println("reservationAutoDTO.getStart() = " + reservationAutoDTO.getStart());
+        System.out.println("reservationAutoDTO.getEnd() = " + reservationAutoDTO.getEnd());
         SearchCriteria searchCriteria = SearchCriteria.builder()
                                                         .box(box)
                                                         .date(reservationAutoDTO.getDate())
@@ -98,27 +112,29 @@ public class SlotServiceImpl implements SlotService {
                                                         .build();
 
         SlotSpecification spec = new SlotSpecification(searchCriteria);
-        slotRepo.findAll(spec).stream().forEach(slot -> System.out.println(slot.getTimeStart()));
+        log.info("Найденные слоты");
+        slotRepo.findAll(spec).stream().forEach(System.out::println);
         List<Slot> slots = findSlotGroup(slotRepo.findAll(spec),numberOfSlots);
         return slots;
     }
 
     List<Slot> findSlotGroup (List<Slot> list, int numberOfSlots){
         int counter=1;
-        list.stream().forEach(slot -> slot.getTimeStart());
         List<Slot> slotGroup = new ArrayList<>();
 
         if(numberOfSlots == 1) {
             slotGroup.add(list.get(0));
             return slotGroup;
         }
-
         for (int i = 0; i < list.size()-1; i++) {
             slotGroup.add(list.get(i));
+            System.out.println("list.get(i) = " + list.get(i));
             if(list.get(i).getTimeEnd().equals(list.get(i+1).getTimeStart())) {
                 counter++;
+                System.out.println("counter = " + counter);
                 if (counter == numberOfSlots) {
                     slotGroup.add(list.get(i+1));
+                    System.out.println("IM HERE");
                     return slotGroup;
                 }
             }

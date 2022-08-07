@@ -54,7 +54,6 @@ public class Reservation {
     @JoinColumn(name="box_id",referencedColumnName = "id")
     private Box box;
 
-    @OneToMany(targetEntity = Option.class, fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
-    @JoinColumn(name = "options")
+    @ManyToMany
     private List<Option> options;
 }

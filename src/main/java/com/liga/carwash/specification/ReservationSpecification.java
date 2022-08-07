@@ -26,12 +26,17 @@ public class ReservationSpecification implements Specification<Reservation> {
         if(searchCriteria.getBox()!=null) predicates.add(builder.equal(root.get("box"), searchCriteria.getBox()));
         if(searchCriteria.getInTime()!=null) predicates.add(builder.equal(root.get("inTime"), searchCriteria.getInTime()));
         if(searchCriteria.getDate()!=null)predicates.add(builder.equal(root.get("date"), searchCriteria.getDate()));
+//        if(searchCriteria.getTimeStart()!=null && searchCriteria.getTimeEnd()!=null){
+//            predicates.add(builder.between(root.get("timeStart"), searchCriteria.getTimeStart(), searchCriteria.getTimeEnd()));
+//            predicates.add(builder.between(root.get("timeEnd"), searchCriteria.getTimeStart(), searchCriteria.getTimeEnd()));
+//        }
         if(searchCriteria.getTimeStart()!=null){
             predicates.add(builder.greaterThanOrEqualTo(root.get("timeStart"), searchCriteria.getTimeStart()));
-            predicates.add(builder.greaterThanOrEqualTo(root.get("timeEnd"), searchCriteria.getTimeStart()));
+//            predicates.add(builder.greaterThanOrEqualTo(root.get("timeEnd"), searchCriteria.getTimeStart()));
+
         }
-        if(searchCriteria.getTimeEnd()!=null) {
-            predicates.add(builder.lessThanOrEqualTo(root.get("timeStart"), searchCriteria.getTimeEnd()));
+        if (searchCriteria.getTimeEnd()!=null) {
+//            predicates.add(builder.lessThanOrEqualTo(root.get("timeStart"), searchCriteria.getTimeEnd()));
             predicates.add(builder.lessThanOrEqualTo(root.get("timeEnd"), searchCriteria.getTimeEnd()));
         }
 
