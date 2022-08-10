@@ -97,7 +97,7 @@ public class SlotServiceImpl implements SlotService {
         return slots;
     }
 
-
+    @Transactional
     List<Slot> findSlotsInBox(Box box, ReservationAutoDTO reservationAutoDTO, double overallTime){
         int numberOfSlots = (int)Math.ceil(overallTime*box.getCoef()/30);
         SearchCriteria searchCriteria = SearchCriteria.builder()

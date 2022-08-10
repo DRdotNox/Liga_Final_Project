@@ -37,7 +37,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers(HttpMethod.POST, "v1/auth/registration").anonymous()
+                .antMatchers(HttpMethod.POST, "v1/auth/registration").access("isAnonymous()")
                 .antMatchers(HttpMethod.POST, "v1/auth/restore-account*").anonymous()
                 .antMatchers("v1/admin/**").hasAuthority("ROLE_ADMIN")
                 .anyRequest().authenticated()

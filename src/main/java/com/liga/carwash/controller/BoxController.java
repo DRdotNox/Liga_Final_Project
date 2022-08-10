@@ -26,8 +26,8 @@ public class BoxController {
 
     @GetMapping("")
     @ResponseStatus(HttpStatus.OK)
-    public List<Box> getAllBoxes() {
-        return boxService.getAllBox();
+    public List<BoxDTO> getAllBoxes() {
+        return boxService.getAllBoxDTO();
     }
 
     @GetMapping("/{id}")

@@ -15,4 +15,6 @@ public interface BoxService {
     void deleteAllBoxes();
 
     BoxDTO getBoxDTOById(Long id);
+
+    List<BoxDTO> getAllBoxDTO();
 }

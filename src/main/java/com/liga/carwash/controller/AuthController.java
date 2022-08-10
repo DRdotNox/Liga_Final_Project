@@ -59,7 +59,6 @@ public class AuthController {
     }
 
     @PostMapping("/registration")
-    @PreAuthorize("hasRole('ANONYMOUS')")
     public String registerUser(@Validated @RequestBody UserRegistrationDTO userRegistrationDTO) {
         return userService.registerUser(userRegistrationDTO);
     }

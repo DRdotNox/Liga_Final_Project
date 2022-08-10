@@ -18,7 +18,7 @@ spring:
 
 cron:
   slot: "0 0/2 * * * ?"
-  reservation: "0 0/2 * * * ?"
+  reservation: "0 0/4 * * * ?"
 
 jwt:
   claim: "role"

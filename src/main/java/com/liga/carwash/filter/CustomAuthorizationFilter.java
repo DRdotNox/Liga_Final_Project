@@ -58,6 +58,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
                     jwtService.errorResponse(response,e);
                 }
             } else {
+                //AnonymousAuthenticationToken token = new AnonymousAuthenticationToken("")
                 filterChain.doFilter(request, response);
             }
         }

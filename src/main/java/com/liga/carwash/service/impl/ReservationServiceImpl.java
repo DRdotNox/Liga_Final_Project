@@ -32,7 +32,7 @@ public class ReservationServiceImpl implements ReservationService {
     final private ReservationRepo reservationRepo;
     private Mapper mapper = new Mapper();
 
-    private final int CANCELLING_TIME = 15;
+    private final int CANCELLING_TIME = 60;
 
     @Override
     @Transactional
@@ -92,6 +92,7 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
+    @Transactional
     public ReservationShortDTO getReservationShortDTOById(Long id) {
         return mapper.ReservationToShortDTO(getReservationById(id));
     }
@@ -113,6 +114,7 @@ public class ReservationServiceImpl implements ReservationService {
 
     // перед удалением обнуляются id брони у слотов
     @Override
+    @Transactional
     public void deleteOneReservationById(Long id) {
         Reservation reservation = getReservationById(id);
         reservation.getSlotList()
@@ -133,6 +135,7 @@ public class ReservationServiceImpl implements ReservationService {
                 .date(LocalDate.now())
                 .inTime(false)
                 .timeStart(time)
+                .reservationStatus(ReservationStatus.BOOKED)
                 .build();
 
         ReservationSpecification spec = new ReservationSpecification(searchCriteria);
@@ -150,6 +153,7 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
+    @Transactional
     public Double getIncome(Box box, LocalDate dateFrom, LocalDate dateTo, LocalTime timeStart, LocalTime timeEnd) {
         IncomeCriteria incomeCriteria = IncomeCriteria.builder()
                 .box(box)
@@ -180,6 +184,7 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
+    @Transactional
     public List<ReservationShortDTO> getReservationsByUser(User user) {
         return reservationRepo.findAllByUser(user).stream()
                 .map(reservation -> mapper.ReservationToShortDTO(reservation))
@@ -187,6 +192,7 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
+    @Transactional
     public void changeOptions(Long id, User user, ChangeOptionsDTO changeOptionsDTO) {
         if(user.getReservationList().stream().noneMatch(reservation -> reservation.getId()==id))
             throw new RuntimeException("Данная бронь к вам не относится");

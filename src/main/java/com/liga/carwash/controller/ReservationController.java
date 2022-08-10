@@ -36,10 +36,8 @@ public class ReservationController {
             log.info("Не выбрана дата");
             return null;
         }
-
         List<Option> options = reservationAutoDTO.getOptions().stream().mapToLong(Option::getId).mapToObj(optionService::getOptionById).toList();
         reservationAutoDTO.setOptions(options);
-
         List<Slot> slots = slotService.getFreeSlotsForReservation(boxes, reservationAutoDTO);
         if (slots == null) {
             log.info("Невозможно произвести запись по желаемым параметрам");
