@@ -1,14 +1,11 @@
 package com.liga.carwash.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.liga.carwash.enums.ReservationStatus;
 import com.sun.istack.NotNull;
 import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.List;
 
 @Entity
 @AllArgsConstructor
@@ -29,19 +26,18 @@ public class Slot {
     @Column(name = "timeEnd")
     private LocalTime timeEnd;
 
-    @ManyToOne(targetEntity = Reservation.class,cascade = CascadeType.ALL,fetch = FetchType.LAZY)
-    @JoinColumn(name="reservation_id",referencedColumnName = "id")
+    @ManyToOne(targetEntity = Reservation.class, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "reservation_id", referencedColumnName = "id")
     Reservation reservation;
 
     @NotNull
-    @ManyToOne(targetEntity = Box.class,cascade = CascadeType.ALL,fetch = FetchType.LAZY)
-    @JoinColumn(name="box_id",referencedColumnName = "id")
+    @ManyToOne(targetEntity = Box.class, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "box_id", referencedColumnName = "id")
     Box box;
 
     @Override
     public String toString() {
         return date.toString() + "  "
                 + timeStart.toString() + " - " + timeEnd.toString() + "  ";
-                //+ reservation.getId();
     }
 }

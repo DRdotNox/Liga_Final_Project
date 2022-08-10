@@ -2,8 +2,9 @@ package com.liga.carwash.repo;
 
 import com.liga.carwash.model.Box;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-import java.util.List;
 
-public interface BoxRepo extends JpaRepository<Box,Long> {
+@Repository
+public interface BoxRepo extends JpaRepository<Box, Long> {
 }

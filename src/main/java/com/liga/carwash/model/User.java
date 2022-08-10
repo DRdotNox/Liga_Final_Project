@@ -2,14 +2,19 @@ package com.liga.carwash.model;
 
 import com.liga.carwash.enums.RoleType;
 import com.sun.istack.NotNull;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.List;
-
+import java.util.Set;
 @Entity
-@Table(name = "users",uniqueConstraints= @UniqueConstraint(columnNames={"email"}))
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Table(name = "users", uniqueConstraints = @UniqueConstraint(columnNames = {"email"}))
 public class User {
-
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,12 +26,13 @@ public class User {
     String email;
     @Column(name = "password")
     String password;
-
     @NotNull
     @Enumerated(EnumType.STRING)
-    @Column(name="role")
+    @Column(name = "role")
     RoleType role;
-
     @OneToMany(mappedBy = "user", targetEntity = Reservation.class)
     List<Reservation> reservationList;
+    @OneToOne(mappedBy = "user", targetEntity = Operator.class)
+    private Operator operator;
+
 }

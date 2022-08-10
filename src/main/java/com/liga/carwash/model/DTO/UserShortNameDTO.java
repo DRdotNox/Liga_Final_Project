@@ -1,6 +1,8 @@
 package com.liga.carwash.model.DTO;
 
+import lombok.Getter;
+
+@Getter
 public class UserShortNameDTO {
-    Long id;
-    String name;
+    String email;
 }

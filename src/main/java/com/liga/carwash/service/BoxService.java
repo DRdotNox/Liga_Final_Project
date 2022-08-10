@@ -13,4 +13,6 @@ public interface BoxService {
     List<Box> getAllBoxSorted();
     void deleteBoxById(Long id);
     void deleteAllBoxes();
+
+    BoxDTO getBoxDTOById(Long id);
 }

@@ -39,7 +39,6 @@ public class SlotServiceImpl implements SlotService {
             log.info("Слоты на сегодня уже есть");
             return;
         }
-
         final int PERIOD = 30;
         final int MINUTES_IN_A_DAY =1440;
 
@@ -71,20 +70,19 @@ public class SlotServiceImpl implements SlotService {
                         .build();
                 slotRepo.save(slot);
                 timeStart = timeStart.plusMinutes(PERIOD);
-                //timeEnd = timeEnd.plusMinutes(PERIOD);
-               // if(timeEnd.isAfter(box.getCloseTime())) return;
             }
         }
         log.info("Слоты на сегодня успешно добавлены");
     }
 
     @Override
+    @Transactional
     public List<Slot> getFreeSlotsForReservation(List<Box> boxes, ReservationAutoDTO reservationAutoDTO) {
         double overallTime = reservationAutoDTO.getOptions().stream().mapToInt(Option::getTime).sum();
         if(reservationAutoDTO.getStart()!=null && reservationAutoDTO.getEnd()!=null){
             if(overallTime > ChronoUnit.MINUTES.between(reservationAutoDTO.getStart(),reservationAutoDTO.getEnd())){
                 log.info("Общее время выполнения услуг превышает заданный для брони диапазон времени");
-                return null;
+                throw new RuntimeException("Общее время выполнения услуг превышает заданный для брони диапазон времени");
             }
         }
 
@@ -102,8 +100,6 @@ public class SlotServiceImpl implements SlotService {
 
     List<Slot> findSlotsInBox(Box box, ReservationAutoDTO reservationAutoDTO, double overallTime){
         int numberOfSlots = (int)Math.ceil(overallTime*box.getCoef()/30);
-        System.out.println("reservationAutoDTO.getStart() = " + reservationAutoDTO.getStart());
-        System.out.println("reservationAutoDTO.getEnd() = " + reservationAutoDTO.getEnd());
         SearchCriteria searchCriteria = SearchCriteria.builder()
                                                         .box(box)
                                                         .date(reservationAutoDTO.getDate())
@@ -112,8 +108,6 @@ public class SlotServiceImpl implements SlotService {
                                                         .build();
 
         SlotSpecification spec = new SlotSpecification(searchCriteria);
-        log.info("Найденные слоты");
-        slotRepo.findAll(spec).stream().forEach(System.out::println);
         List<Slot> slots = findSlotGroup(slotRepo.findAll(spec),numberOfSlots);
         return slots;
     }
@@ -128,13 +122,10 @@ public class SlotServiceImpl implements SlotService {
         }
         for (int i = 0; i < list.size()-1; i++) {
             slotGroup.add(list.get(i));
-            System.out.println("list.get(i) = " + list.get(i));
             if(list.get(i).getTimeEnd().equals(list.get(i+1).getTimeStart())) {
                 counter++;
-                System.out.println("counter = " + counter);
                 if (counter == numberOfSlots) {
                     slotGroup.add(list.get(i+1));
-                    System.out.println("IM HERE");
                     return slotGroup;
                 }
             }

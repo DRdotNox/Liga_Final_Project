@@ -34,6 +34,4 @@ public class Box {
     @OneToMany(mappedBy = "box", targetEntity = Reservation.class)
     private List<Reservation> reservations;
 
-//    @OneToOne
-//    private User user;
 }

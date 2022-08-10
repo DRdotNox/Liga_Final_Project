@@ -1,27 +1,35 @@
 package com.liga.carwash.model.DTO;
 
-import lombok.Getter;
-import lombok.Setter;
+import com.liga.carwash.enums.RoleType;
+import com.liga.carwash.validation.ValidEmail;
+import lombok.*;
 
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 
+@Builder
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserSecurityDTO {
 
-    @NotNull
-    @NotEmpty
-    private String name;
+    private Long id;
 
-
-    @NotNull
+    @NonNull
     @NotEmpty
-    private String password;
-    private String matchingPassword;
-
-    @NotNull
-    @NotEmpty
+    @ValidEmail
     private String email;
 
+    @NonNull
+    @NotEmpty
+    private String password;
+
+    private RoleType roleType;
+
+    @Override
+    public String toString() {
+        return getEmail() + "\n" + getRoleType() + "\n";
+    }
+
 }
+

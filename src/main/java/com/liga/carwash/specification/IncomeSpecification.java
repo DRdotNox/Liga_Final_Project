@@ -27,12 +27,16 @@ public class IncomeSpecification implements Specification<Reservation> {
 
         predicates.add(builder.equal(root.get("status"), ReservationStatus.FINISHED));
 
-        if(incomeCriteria.getBox()!=null) predicates.add(builder.equal(root.get("box"), incomeCriteria.getBox()));
-        if(incomeCriteria.getDateFrom()!=null)predicates.add(builder.greaterThanOrEqualTo(root.get("date"), incomeCriteria.getDateFrom()));
-        if(incomeCriteria.getDateTo()!=null)predicates.add(builder.lessThanOrEqualTo(root.get("date"), incomeCriteria.getDateTo()));
+        if (incomeCriteria.getBox() != null) predicates.add(builder.equal(root.get("box"), incomeCriteria.getBox()));
+        if (incomeCriteria.getDateFrom() != null)
+            predicates.add(builder.greaterThanOrEqualTo(root.get("date"), incomeCriteria.getDateFrom()));
+        if (incomeCriteria.getDateTo() != null)
+            predicates.add(builder.lessThanOrEqualTo(root.get("date"), incomeCriteria.getDateTo()));
 
-        if(incomeCriteria.getTimeStart()!=null) predicates.add(builder.greaterThanOrEqualTo(root.get("timeStart"), incomeCriteria.getTimeStart()));
-        if(incomeCriteria.getTimeEnd()!=null)    predicates.add(builder.lessThanOrEqualTo(root.get("timeEnd"), incomeCriteria.getTimeEnd()));
+        if (incomeCriteria.getTimeStart() != null)
+            predicates.add(builder.greaterThanOrEqualTo(root.get("timeStart"), incomeCriteria.getTimeStart()));
+        if (incomeCriteria.getTimeEnd() != null)
+            predicates.add(builder.lessThanOrEqualTo(root.get("timeEnd"), incomeCriteria.getTimeEnd()));
 
 
         return builder.and(predicates.toArray(new Predicate[0]));

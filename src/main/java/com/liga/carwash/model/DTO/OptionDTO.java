@@ -1,7 +1,10 @@
 package com.liga.carwash.model.DTO;
 
-import javax.persistence.Column;
+import lombok.Builder;
+import lombok.Getter;
 
+@Getter
+@Builder
 public class OptionDTO {
     private Long id;
     private String name;

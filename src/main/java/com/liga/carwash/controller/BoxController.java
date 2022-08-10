@@ -5,50 +5,55 @@ import com.liga.carwash.model.DTO.BoxDTO;
 import com.liga.carwash.service.BoxService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/boxes/v1")
+@RequestMapping("/v1/boxes")
 public class BoxController {
     private final BoxService boxService;
 
-    @PostMapping("/")
+    @PostMapping("")
+    @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.OK)
-    public void addBox(@Validated @RequestBody BoxDTO boxDTO){
+    public void addBox(@Validated @RequestBody BoxDTO boxDTO) {
         boxService.addBox(boxDTO);
     }
 
-    @GetMapping("/all")
+    @GetMapping("")
     @ResponseStatus(HttpStatus.OK)
-    public List<Box> getAllBoxes(){
+    public List<Box> getAllBoxes() {
         return boxService.getAllBox();
     }
 
-    @GetMapping("/all/{id}")
+    @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public Box getBoxById(@PathVariable("id") Long id){
-        return boxService.getBoxById(id);
+    public BoxDTO getBoxById(@PathVariable("id") Long id) {
+        return boxService.getBoxDTOById(id);
     }
 
-    @PutMapping("/all/{id}")
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.OK)
-    public void updateBox(@Validated @RequestBody BoxDTO boxDTO){
+    public void updateBox(@Validated @RequestBody BoxDTO boxDTO) {
         boxService.updateBox(boxDTO);
     }
 
-    @DeleteMapping("/all/{id}")
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.OK)
-    public void deleteById(@PathVariable("id") Long id){
-
+    public void deleteById(@PathVariable("id") Long id) {
         boxService.deleteBoxById(id);
     }
 
-    @DeleteMapping("/all")
+    @DeleteMapping("")
+    @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.OK)
-    public void deleteAll(){
+    public void deleteAll() {
         boxService.deleteAllBoxes();
     }
 }

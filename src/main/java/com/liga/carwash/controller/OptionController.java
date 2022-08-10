@@ -1,10 +1,13 @@
 package com.liga.carwash.controller;
 
+import com.liga.carwash.model.DTO.DiscountOptionDTO;
 import com.liga.carwash.model.DTO.OptionDTO;
-import com.liga.carwash.model.Option;
+import com.liga.carwash.model.User;
+import com.liga.carwash.service.AuthService;
 import com.liga.carwash.service.OptionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,44 +15,54 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/options/v1")
+@RequestMapping("v1/options")
 public class OptionController {
     private final OptionService optionService;
+    private final AuthService authService;
 
-    @PostMapping("/")
+    @PostMapping("")
+    @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.OK)
-    public void addOption(@Validated @RequestBody OptionDTO optionDTO){
+    public void addOption(@Validated @RequestBody OptionDTO optionDTO) {
         optionService.addOption(optionDTO);
     }
 
-    @GetMapping("/all")
+    @GetMapping("")
     @ResponseStatus(HttpStatus.OK)
-    public List<Option> getAllBoxes(){
+    public List<OptionDTO> getAllOptions() {
         return optionService.getAllOptions();
     }
 
-    @GetMapping("/all/{id}")
+    @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public Option getBoxById(@PathVariable("id") Long id){
-        return optionService.getOptionById(id);
+    public OptionDTO getOptionById(@PathVariable("id") Long id) {
+        return optionService.getOptionDTOById(id);
     }
 
-    @PutMapping("/all/{id}")
+    @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public void updateOption(@Validated @RequestBody OptionDTO optionDTO){
+    public void updateOption(@Validated @RequestBody OptionDTO optionDTO) {
         optionService.updateOption(optionDTO);
     }
 
-    @DeleteMapping("/all/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public void deleteById(@PathVariable("id") Long id){
+    @PutMapping("/id/discount")
+    @PreAuthorize("hasAnyRole('ADMIN','OPERATOR')")
+    public void changeDiscount(DiscountOptionDTO discountOptionDTO) {
+        User user = authService.getCurrentUser();
+        optionService.changeDiscount(user, discountOptionDTO);
+    }
 
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteById(@PathVariable("id") Long id) {
         optionService.deleteOptionById(id);
     }
 
-    @DeleteMapping("/all")
+    @DeleteMapping("")
+    @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.OK)
-    public void deleteAll(){
+    public void deleteAll() {
         optionService.deleteAllOptions();
     }
 }

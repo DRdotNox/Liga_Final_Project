@@ -19,3 +19,9 @@ spring:
 cron:
   slot: "0 0/2 * * * ?"
   reservation: "0 0/2 * * * ?"
+
+jwt:
+  claim: "role"
+  access_time: 15
+  refresh_time: 30
+  secret_key: "secret"

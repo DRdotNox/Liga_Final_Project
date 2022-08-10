@@ -10,8 +10,6 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-
 @Builder
 @Getter
 @Setter
@@ -24,5 +22,6 @@ public class SearchCriteria {
     private LocalTime timeStart;
     private LocalTime timeEnd;
 
+    private ReservationStatus reservationStatus;
     private Boolean inTime;
 }

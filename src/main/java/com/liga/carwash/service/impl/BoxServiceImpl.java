@@ -1,5 +1,6 @@
 package com.liga.carwash.service.impl;
 
+import com.liga.carwash.mapper.Mapper;
 import com.liga.carwash.model.Box;
 import com.liga.carwash.model.DTO.BoxDTO;
 import com.liga.carwash.repo.BoxRepo;
@@ -15,6 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BoxServiceImpl implements BoxService {
     private final BoxRepo boxRepo;
+    private Mapper mapper = new Mapper();
 
     @Override
     public List<Box> getAllBoxSorted() {
@@ -23,8 +25,7 @@ public class BoxServiceImpl implements BoxService {
 
     @Override
     public void addBox(BoxDTO boxDTO) {
-        //маппер
-        //boxRepo.save();
+        boxRepo.save(mapper.boxDTOtoBox(boxDTO));
     }
 
     @Override
@@ -36,6 +37,11 @@ public class BoxServiceImpl implements BoxService {
     @Override
     public Box getBoxById(Long id) {
         return boxRepo.findById(id).orElseThrow(EntityNotFoundException::new);
+    }
+
+    @Override
+    public BoxDTO getBoxDTOById(Long id) {
+        return mapper.boxToDTO(getBoxById(id));
     }
 
     @Override

@@ -10,6 +10,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
+
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -23,20 +24,16 @@ public class ReservationSpecification implements Specification<Reservation> {
 
         List<Predicate> predicates = new ArrayList<>();
 
-        if(searchCriteria.getBox()!=null) predicates.add(builder.equal(root.get("box"), searchCriteria.getBox()));
-        if(searchCriteria.getInTime()!=null) predicates.add(builder.equal(root.get("inTime"), searchCriteria.getInTime()));
-        if(searchCriteria.getDate()!=null)predicates.add(builder.equal(root.get("date"), searchCriteria.getDate()));
-//        if(searchCriteria.getTimeStart()!=null && searchCriteria.getTimeEnd()!=null){
-//            predicates.add(builder.between(root.get("timeStart"), searchCriteria.getTimeStart(), searchCriteria.getTimeEnd()));
-//            predicates.add(builder.between(root.get("timeEnd"), searchCriteria.getTimeStart(), searchCriteria.getTimeEnd()));
-//        }
-        if(searchCriteria.getTimeStart()!=null){
+        if (searchCriteria.getBox() != null) predicates.add(builder.equal(root.get("box"), searchCriteria.getBox()));
+        if (searchCriteria.getReservationStatus() != null)
+            predicates.add(builder.equal(root.get("status"), searchCriteria.getReservationStatus()));
+        if (searchCriteria.getInTime() != null)
+            predicates.add(builder.equal(root.get("inTime"), searchCriteria.getInTime()));
+        if (searchCriteria.getDate() != null) predicates.add(builder.equal(root.get("date"), searchCriteria.getDate()));
+        if (searchCriteria.getTimeStart() != null) {
             predicates.add(builder.greaterThanOrEqualTo(root.get("timeStart"), searchCriteria.getTimeStart()));
-//            predicates.add(builder.greaterThanOrEqualTo(root.get("timeEnd"), searchCriteria.getTimeStart()));
-
         }
-        if (searchCriteria.getTimeEnd()!=null) {
-//            predicates.add(builder.lessThanOrEqualTo(root.get("timeStart"), searchCriteria.getTimeEnd()));
+        if (searchCriteria.getTimeEnd() != null) {
             predicates.add(builder.lessThanOrEqualTo(root.get("timeEnd"), searchCriteria.getTimeEnd()));
         }
 
