@@ -54,10 +54,10 @@ VALUES ('2022-08-03', '12:30:00', '12:00:00', 1, null),
 ('2022-08-03', '17:30:00', '17:00:00', 3, null);
 
 INSERT INTO options (id, discount, name, price, time)
-VALUES (DEFAULT, null, 'Помывка', 1000, 45),
-(DEFAULT, null, 'Уборка', 2000, 45),
-(DEFAULT, null, 'Повывка салона', 1500, 45),
-(DEFAULT, null, 'Помывка Люкс', 700, 45);
+VALUES (DEFAULT, 5, 'Помывка', 1000, 45),
+(DEFAULT, 10, 'Уборка', 2000, 45),
+(DEFAULT, 20, 'Повывка салона', 1500, 45),
+(DEFAULT, 10, 'Помывка Люкс', 700, 45);
 
 INSERT INTO users (email, name, password, role)
 VALUES ('test.ru','user','$2a$10$WNNS.3If6EnbizUfxqVWoeZ0sYrspvhnmROyv9Dgw17mJTm5Yk2s6','ROLE_USER'),
