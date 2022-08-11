@@ -69,11 +69,10 @@ public class OptionServiceImpl implements OptionService {
             throw new RuntimeException("Скидка вне установленного диапазона");
         }
         }
-        else {
-            Option option = getOptionById(discountOptionDTO.getOption_id());
-            option.setDiscount(discountOptionDTO.getDiscount());
-            optionRepo.save(option);
-        }
+
+        Option option = getOptionById(discountOptionDTO.getOption_id());
+        option.setDiscount(discountOptionDTO.getDiscount());
+        optionRepo.save(option);
     }
 
     @Override

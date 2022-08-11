@@ -63,6 +63,11 @@ public class BoxServiceImpl implements BoxService {
     @Override
     @Transactional
     public void deleteBoxById(Long id) {
+        Box box = getBoxById(id);
+        box.getOperators().forEach(operator -> operator.setBox(null));
+        box.getOperators().clear();
+        box.getSlotList().clear();
+        box.getReservations().clear();
         boxRepo.deleteById(id);
     }
 

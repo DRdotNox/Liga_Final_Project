@@ -45,9 +45,9 @@ public class OptionController {
         optionService.updateOption(optionDTO);
     }
 
-    @PutMapping("/id/discount")
+    @PutMapping("/{id}/discount")
     @PreAuthorize("hasAnyRole('ADMIN','OPERATOR')")
-    public void changeDiscount(DiscountOptionDTO discountOptionDTO) {
+    public void changeDiscount(@Validated @RequestBody DiscountOptionDTO discountOptionDTO) {
         User user = authService.getCurrentUser();
         optionService.changeDiscount(user, discountOptionDTO);
     }

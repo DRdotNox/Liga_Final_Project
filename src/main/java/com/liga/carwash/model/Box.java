@@ -34,4 +34,7 @@ public class Box {
     @OneToMany(mappedBy = "box", targetEntity = Reservation.class)
     private List<Reservation> reservations;
 
+    @OneToMany(mappedBy = "box", targetEntity = Operator.class)
+    private List<Operator> operators;
+
 }
